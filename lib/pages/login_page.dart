@@ -7,37 +7,102 @@ class LoginPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Login'),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
+      body: Container(
+        padding: const EdgeInsets.all(40),
+        width: double.infinity,
+        height: double.infinity,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            TextField(
+            const Text(
+              'Login Account!',
+              style: TextStyle(fontSize: 26, color: Colors.white),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 40),
+            TextFormField(
               controller: _usernameController,
-              decoration: InputDecoration(labelText: 'Username'),
+              decoration: const InputDecoration(
+                labelText: 'Username',
+                border: OutlineInputBorder(),
+                filled: true,
+                fillColor: Color.fromARGB(0, 255, 255, 255),
+              ),
             ),
-            TextField(
+            const SizedBox(
+                height: 20), // Spacing between username and password fields
+            TextFormField(
               controller: _passwordController,
-              decoration: InputDecoration(labelText: 'Password'),
-              obscureText: true,
+              obscureText: true, // Use true to hide password
+              decoration: const InputDecoration(
+                labelText: 'Password',
+                border: OutlineInputBorder(),
+                filled: true,
+                fillColor: Color.fromARGB(0, 255, 255, 255),
+              ),
             ),
-            SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () {
-                if (_usernameController.text == 'user' &&
-                    _passwordController.text == 'password') {
-                  Navigator.pushReplacementNamed(context, '/home');
-                } else {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('Invalid credentials')),
-                  );
-                }
-              },
-              child: Text('Login'),
+            const SizedBox(
+                height: 10), // Spacing between password field and the button
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                TextButton(
+                    onPressed: () => {},
+                    style: ButtonStyle(
+                      // Optional: Change text color
+                      overlayColor: MaterialStateProperty.all(
+                          Colors.transparent), // No splash on press
+                      padding: MaterialStateProperty.all<EdgeInsets>(
+                          EdgeInsets.zero),
+                    ),
+                    child: Text("Forgot Password?",
+                        style: TextStyle(fontSize: 15)))
+              ],
             ),
+            const SizedBox(height: 40), // Spacing before the button
+            Row(
+              children: [
+                Flexible(
+                  child: ElevatedButton(
+                    onPressed: () {
+                      Navigator.pushNamed(context, '/');
+                    },
+                    style: ElevatedButton.styleFrom(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(4.0),
+                      ),
+                      padding: EdgeInsets.symmetric(
+                          vertical:
+                              18), // Adjust the vertical padding to control the button's height
+                      // Ensuring the button stretches
+                      minimumSize: Size(double.infinity,
+                          45), // Sets a minimum size for the button
+                    ),
+                    child: const Text(
+                      'Login',
+                      style: TextStyle(
+                          fontSize:
+                              16), // Optional: Adjust text size if necessary
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(
+                height: 20), // Spacing between the button and the text
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  "Don't have an account?",
+                  style: TextStyle(fontSize: 15),
+                ),
+                SizedBox(width: 5),
+                TextButton(
+                    onPressed: () => {},
+                    child: Text("Sign Up!", style: TextStyle(fontSize: 15)))
+              ],
+            )
           ],
         ),
       ),
