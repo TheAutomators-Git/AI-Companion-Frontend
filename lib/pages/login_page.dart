@@ -65,7 +65,7 @@ class LoginPage extends StatelessWidget {
                 Flexible(
                   child: ElevatedButton(
                     onPressed: () {
-                      Navigator.pushNamed(context, '/');
+                      Navigator.pushNamed(context, '/home');
                     },
                     style: ElevatedButton.styleFrom(
                       shape: RoundedRectangleBorder(
