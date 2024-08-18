@@ -1,15 +1,24 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'pages/introduction_page.dart';
 import 'pages/login_page.dart';
 import 'pages/home_page.dart';
 
-void main() {
+void main() async {
+  // Ensure that the Flutter bindings are initialized before using Dotenv
+  WidgetsFlutterBinding.ensureInitialized();
+
+  // Load the .env file
+  await dotenv.load(fileName: ".env");
+
   runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final String apiUrl = dotenv.env['API_URL'] ?? 'http://default_url';
+
     const Map<int, Color> color = {
       50: Color.fromRGBO(255, 87, 87, .1),
       100: Color.fromRGBO(255, 87, 87, .2),
@@ -26,7 +35,6 @@ class MyApp extends StatelessWidget {
     MaterialColor customColor = const MaterialColor(0xFFFF5757, color);
 
     return MaterialApp(
-      //Disable the debug banner
       debugShowCheckedModeBanner: false,
       title: 'AI Companion App',
       theme: ThemeData(
@@ -41,7 +49,8 @@ class MyApp extends StatelessWidget {
       routes: {
         '/': (context) => IntroductionPage(),
         '/login': (context) => LoginPage(),
-        '/home': (context) => HomePage(),
+        '/home': (context) =>
+            HomePage(apiUrl: apiUrl), // Ensure HomePage accepts apiUrl
       },
     );
   }

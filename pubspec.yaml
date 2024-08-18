@@ -12,6 +12,8 @@ dependencies:
         sdk: flutter
     flutter_svg: ^2.0.7
     cupertino_icons: ^1.0.6
+    http: ^0.13.3
+    flutter_dotenv: ^5.0.2
 
 dev_dependencies:
     flutter_test:
@@ -21,4 +23,5 @@ dev_dependencies:
 flutter:
     assets:
         - lib/assets/logo.png
+        - .env
     uses-material-design: true
