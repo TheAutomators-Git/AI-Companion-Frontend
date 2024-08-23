@@ -15,12 +15,45 @@ class _HomePageState extends State<HomePage> {
   List<Map<String, String>> messages = [
     {
       "sender": "bot",
+      "message": "Hello and welcome to Favlist, your Personalized AI Companion."
+    },
+    {
+      "sender": "bot",
       "message":
-          "Hello! Welcome to AI Companion App! I am here to assist you today! Let's start by a small conversion!"
-    }
+          "My purpose is to help you upload and save a summary of the most important parts of your life. Every human has a special mix of likes and favorites - your personal interest graph is as unique as your fingerprint - your story deserves to be saved and shared! Uploading part of your mind will have a number of benefits."
+    },
+    {
+      "sender": "bot",
+      "message":
+          "With my help, you will be able to learn new insights about yourself. I will be able to provide recommendations that are curated to your unique tastes. I will create beautiful graphics that describe your life and favorites. And I will be a permanent way to save and store what is important to you."
+    },
+    {"sender": "bot", "message": "<SELECTOR />"}
   ];
   TextEditingController _controller = TextEditingController();
-  bool _isLoading = false; // This will manage the state of loading
+  bool _isLoading = false;
+
+  final List<String> categories = [
+    'Lifestyle',
+    'Career/School',
+    'Sports',
+    'Hobbies',
+    'Music',
+    'Movies',
+    'TV',
+    'Art',
+    'Books',
+    'Theatre',
+    'Travel',
+    'Fashion',
+    'Nature',
+    'Food',
+    'Cars',
+    'Technology',
+    'Pets',
+    'Fitness/Wellness',
+    'Gaming'
+  ];
+  Set<String> selectedItems = {};
 
   @override
   void initState() {
@@ -30,7 +63,7 @@ class _HomePageState extends State<HomePage> {
 
   void _pingAPI() async {
     setState(() {
-      _isLoading = true; // Start loading
+      _isLoading = true;
     });
     try {
       var response = await http.post(
@@ -48,7 +81,7 @@ class _HomePageState extends State<HomePage> {
         var data = jsonDecode(response.body);
         setState(() {
           messages.add({"sender": "bot", "message": data['question']});
-          _isLoading = false; // Stop loading after getting response
+          _isLoading = false;
         });
       } else {
         throw Exception('Failed to load response');
@@ -56,7 +89,7 @@ class _HomePageState extends State<HomePage> {
     } catch (e) {
       setState(() {
         messages.add({"sender": "bot", "message": "Something Went Wrong :("});
-        _isLoading = false; // Stop loading on error
+        _isLoading = false;
       });
     }
   }
@@ -73,6 +106,10 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget _buildMessage(Map<String, String> message, bool isLast) {
+    if (message['message'] == '<SELECTOR />') {
+      return _buildSelector();
+    }
+
     bool isUser = message['sender'] == 'user';
     double maxWidth = MediaQuery.of(context).size.width * 0.7;
 
@@ -119,6 +156,110 @@ class _HomePageState extends State<HomePage> {
               CircularProgressIndicator(),
             ],
           )
+      ],
+    );
+  }
+
+  Widget _buildSelector() {
+    double maxWidth = MediaQuery.of(context).size.width * 0.7;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Container(
+          margin: const EdgeInsets.symmetric(vertical: 5),
+          alignment: Alignment.centerLeft,
+          child: ConstrainedBox(
+            constraints: BoxConstraints(
+              maxWidth: maxWidth,
+            ),
+            child: Container(
+              margin: const EdgeInsets.symmetric(vertical: 2),
+              padding: const EdgeInsets.all(10),
+              decoration: const BoxDecoration(
+                  color: Color(0xFFFF5757),
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.zero,
+                    topRight: Radius.circular(10),
+                    bottomLeft: Radius.zero,
+                    bottomRight: Radius.zero,
+                  )),
+              child: const Text(
+                "Please select a list of preferences suitable for you!",
+                style: TextStyle(color: Colors.white),
+              ),
+            ),
+          ),
+        ),
+        Column(
+          children: categories.asMap().entries.map((entry) {
+            int idx = entry.key;
+            String category = entry.value;
+
+            return Container(
+                child: InkWell(
+              onTap: () {
+                setState(() {
+                  if (!selectedItems.contains(category)) {
+                    if (selectedItems.length < 5) {
+                      selectedItems.add(category);
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content:
+                              Text('You can select only up to 5 categories'),
+                        ),
+                      );
+                    }
+                  } else {
+                    selectedItems.remove(category);
+                  }
+                });
+              },
+              child: Container(
+                margin: const EdgeInsets.symmetric(vertical: 5),
+                padding:
+                    const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+                width: MediaQuery.of(context).size.width * 0.7,
+                decoration: BoxDecoration(
+                  color: const Color(0xFFFF5757),
+                ),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        '${idx + 1}. $category', // Display index and category
+                        style: const TextStyle(color: Colors.white),
+                      ),
+                    ),
+                    Checkbox(
+                      value: selectedItems.contains(category),
+                      onChanged: (bool? isChecked) {
+                        setState(() {
+                          if (isChecked != null && isChecked) {
+                            if (selectedItems.length < 5) {
+                              selectedItems.add(category);
+                            } else {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text(
+                                      'You can select only up to 5 categories'),
+                                ),
+                              );
+                            }
+                          } else {
+                            selectedItems.remove(category);
+                          }
+                        });
+                      },
+                      checkColor: Colors.white,
+                      activeColor: Color.fromARGB(255, 139, 39, 39),
+                    ),
+                  ],
+                ),
+              ),
+            ));
+          }).toList(),
+        )
       ],
     );
   }
