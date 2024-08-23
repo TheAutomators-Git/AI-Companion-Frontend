@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
@@ -58,10 +59,9 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-    _pingAPI();
   }
 
-  void _pingAPI() async {
+  void _pingAPI(String answer) async {
     setState(() {
       _isLoading = true;
     });
@@ -71,9 +71,11 @@ class _HomePageState extends State<HomePage> {
         headers: <String, String>{
           'Content-Type': 'application/json',
         },
-        body: jsonEncode(<String, String>{
+        body: jsonEncode(<String, dynamic>{
           'name': 'User',
-          'answer': '',
+          'answer': answer,
+          'id': 'AB123',
+          'topics': selectedItems.toList(),
         }),
       );
 
@@ -101,7 +103,7 @@ class _HomePageState extends State<HomePage> {
         messages.add({"sender": "user", "message": text});
         _controller.clear();
       });
-      _pingAPI();
+      _pingAPI(text);
     }
   }
 
@@ -220,8 +222,8 @@ class _HomePageState extends State<HomePage> {
                 padding:
                     const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
                 width: MediaQuery.of(context).size.width * 0.7,
-                decoration: BoxDecoration(
-                  color: const Color(0xFFFF5757),
+                decoration: const BoxDecoration(
+                  color: Color(0xFFFF5757),
                 ),
                 child: Row(
                   children: [
@@ -252,7 +254,7 @@ class _HomePageState extends State<HomePage> {
                         });
                       },
                       checkColor: Colors.white,
-                      activeColor: Color.fromARGB(255, 139, 39, 39),
+                      activeColor: const Color.fromARGB(255, 139, 39, 39),
                     ),
                   ],
                 ),
