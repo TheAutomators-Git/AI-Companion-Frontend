@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'categories_page.dart'; // Import the CategoriesPage
 
 class LoginPage extends StatelessWidget {
   final TextEditingController _usernameController = TextEditingController();
@@ -49,7 +50,6 @@ class LoginPage extends StatelessWidget {
                 TextButton(
                     onPressed: () => {},
                     style: ButtonStyle(
-                      // Optional: Change text color
                       overlayColor: MaterialStateProperty.all(
                           Colors.transparent), // No splash on press
                       padding: MaterialStateProperty.all<EdgeInsets>(
@@ -65,7 +65,12 @@ class LoginPage extends StatelessWidget {
                 Flexible(
                   child: ElevatedButton(
                     onPressed: () {
-                      Navigator.pushNamed(context, '/home');
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => CategoriesPage(),
+                        ),
+                      );
                     },
                     style: ElevatedButton.styleFrom(
                       shape: RoundedRectangleBorder(
@@ -74,7 +79,6 @@ class LoginPage extends StatelessWidget {
                       padding: EdgeInsets.symmetric(
                           vertical:
                               18), // Adjust the vertical padding to control the button's height
-                      // Ensuring the button stretches
                       minimumSize: Size(double.infinity,
                           45), // Sets a minimum size for the button
                     ),
