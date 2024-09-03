@@ -134,8 +134,6 @@ class _HomePageState extends State<HomePage> {
 
       if (response.statusCode == 200) {
         var data = jsonDecode(response.body);
-
-        // Check if the response contains a base64 image
         if (data['completed'] == true) {
           setState(() {
             messages.add({
@@ -144,7 +142,7 @@ class _HomePageState extends State<HomePage> {
                   'Please wait while we generate your personalized image!'
             });
           });
-          _saveImage(); // Save the image that is generated
+          _saveImage();
         } else {
           setState(() {
             messages.add({"sender": "bot", "message": data['question']});
@@ -155,7 +153,7 @@ class _HomePageState extends State<HomePage> {
           _isLoading = false;
         });
       } else {
-        _saveConversation(); // Save conversation even if the response fails
+        _saveConversation();
         throw Exception('Failed to load response');
       }
     } catch (e) {
@@ -175,7 +173,6 @@ class _HomePageState extends State<HomePage> {
       });
       _pingAPI(text);
     }
-    // _saveImage();
   }
 
   Widget _saveButton() {
@@ -226,7 +223,7 @@ class _HomePageState extends State<HomePage> {
               ),
               child: message.containsKey('image')
                   ? Image.memory(
-                      message['image'], // Display the image
+                      message['image'],
                       fit: BoxFit.cover,
                     )
                   : Text(
@@ -314,7 +311,7 @@ class _HomePageState extends State<HomePage> {
                   children: [
                     Expanded(
                       child: Text(
-                        '${idx + 1}. $category', // Display index and category
+                        '${idx + 1}. $category',
                         style: const TextStyle(color: Colors.white),
                       ),
                     ),
@@ -367,9 +364,7 @@ class _HomePageState extends State<HomePage> {
                   textAlign: TextAlign.left,
                 ),
                 IconButton(
-                  onPressed: () {
-                    // Handle settings button press
-                  },
+                  onPressed: () {},
                   icon: const Icon(Icons.settings, color: Colors.white),
                 ),
               ],

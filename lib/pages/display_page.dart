@@ -22,11 +22,10 @@ class _DisplayPageState extends State<DisplayPage> {
         title: const Text('Display Page'),
       ),
       body: Container(
-        color: Colors.white, // Ensure the background color is always white
+        color: Colors.white,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            // Heading
             const Padding(
               padding: EdgeInsets.all(16.0),
               child: Text(
@@ -39,8 +38,6 @@ class _DisplayPageState extends State<DisplayPage> {
                 textAlign: TextAlign.center,
               ),
             ),
-            
-            // Image Carousel
             Expanded(
               child: Stack(
                 children: [
@@ -49,7 +46,7 @@ class _DisplayPageState extends State<DisplayPage> {
                     itemBuilder: (context, index, realIndex) {
                       return Container(
                         constraints: BoxConstraints(
-                          maxWidth: 350, // Set max width to 400px
+                          maxWidth: 350, 
                         ),
                         child: Image.network(
                           _imageUrls[index],
@@ -70,7 +67,6 @@ class _DisplayPageState extends State<DisplayPage> {
                       },
                     ),
                   ),
-                  // Left arrow
                   Positioned(
                     left: 8,
                     top: 0,
@@ -100,8 +96,6 @@ class _DisplayPageState extends State<DisplayPage> {
                 ],
               ),
             ),
-            
-            // Dot indicators
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: _imageUrls.map((url) {
@@ -113,7 +107,7 @@ class _DisplayPageState extends State<DisplayPage> {
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     color: _currentIndex == index
-                        ? Color(0xFFfc5656) // Replace blue with #fc5656
+                        ? Color(0xFFfc5656)
                         : Colors.grey,
                   ),
                 );

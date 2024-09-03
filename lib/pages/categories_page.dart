@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'display_page.dart'; // Import the DisplayPage
 
 class CategoriesPage extends StatefulWidget {
   @override
@@ -15,87 +14,127 @@ class _CategoriesPageState extends State<CategoriesPage> {
   ];
 
   Set<int> selectedCategories = Set<int>();
+  String warningMessage = '';
+
+  // Method to convert selected indices to category names
+  List<String> getSelectedCategoryNames() {
+    return selectedCategories.map((index) => categories[index]).toList();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Categories'),
+        title: Text('Select Categories'),
       ),
       body: LayoutBuilder(
         builder: (context, constraints) {
-          double maxWidth = 600; // Set your desired maximum width here
+          double maxWidth = 600;
           double gridWidth = constraints.maxWidth < maxWidth
               ? constraints.maxWidth
               : maxWidth;
 
-          return Center(
-            child: SizedBox(
-              width: gridWidth,
-              child: Column(
-                children: [
-                  Expanded(
-                    child: GridView.builder(
-                      padding: EdgeInsets.all(10.0),
-                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 2,
-                        childAspectRatio: 3 / 2,
-                        crossAxisSpacing: 10,
-                        mainAxisSpacing: 10,
+          return Container(
+            padding: EdgeInsets.all(20.0),
+            child: Center(
+              child: SizedBox(
+                width: gridWidth,
+                child: Column(
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.fromLTRB(10, 0, 10, 10),
+                      child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          "Please Select Some Categories to Continue from below",
+                          style: TextStyle(fontSize: 20),
+                        ),
                       ),
-                      itemCount: categories.length,
-                      itemBuilder: (context, index) {
-                        return GestureDetector(
-                          onTap: () {
-                            setState(() {
-                              if (selectedCategories.contains(index)) {
-                                selectedCategories.remove(index);
-                              } else {
-                                selectedCategories.add(index);
-                              }
-                            });
-                          },
-                          child: Container(
-                            decoration: BoxDecoration(
-                              color: selectedCategories.contains(index)
-                                  ? Color(0xFFfc5656) // Updated color
-                                  : Colors.grey[300],
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                            alignment: Alignment.center,
-                            child: Text(
-                              categories[index],
-                              style: TextStyle(
+                    ),
+                    if (warningMessage.isNotEmpty)
+                      Padding(
+                        padding: EdgeInsets.fromLTRB(10, 0, 10, 10),
+                        child: Align(
+                          alignment: Alignment.centerLeft,
+                          child: Text(
+                            warningMessage,
+                            style: TextStyle(color: Colors.red, fontSize: 20),
+                          ),
+                        ),
+                      ),
+                    Expanded(
+                      child: GridView.builder(
+                        padding: EdgeInsets.all(10.0),
+                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 2,
+                          childAspectRatio: 3 / 2,
+                          crossAxisSpacing: 20,
+                          mainAxisSpacing: 20,
+                        ),
+                        itemCount: categories.length,
+                        itemBuilder: (context, index) {
+                          return GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                if (selectedCategories.contains(index)) {
+                                  selectedCategories.remove(index);
+                                  warningMessage = '';
+                                } else {
+                                  if (selectedCategories.length < 5) {
+                                    selectedCategories.add(index);
+                                    warningMessage = '';
+                                  } else {
+                                    warningMessage =
+                                        'You can select max 5 categories.';
+                                  }
+                                }
+                              });
+                            },
+                            child: Container(
+                              decoration: BoxDecoration(
                                 color: selectedCategories.contains(index)
-                                    ? Colors.white
-                                    : Colors.black,
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
+                                    ? Color(0xFFfc5656)
+                                    : Colors.grey[300],
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              alignment: Alignment.center,
+                              child: Text(
+                                categories[index],
+                                style: TextStyle(
+                                  color: selectedCategories.contains(index)
+                                      ? Colors.white
+                                      : Colors.black,
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
                             ),
+                          );
+                        },
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(10, 30, 10, 10),
+                      child: SizedBox(
+                        width: double.infinity,
+                        height: 50,
+                        child: ElevatedButton(
+                          onPressed: selectedCategories.length >= 5
+                              ? () {
+                                }
+                              : null,
+                          style: ElevatedButton.styleFrom(
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(5),
+                            ),
+                            padding: EdgeInsets.zero,
                           ),
-                        );
-                      },
+                          child: Text('Continue'),
+                        ),
+                      ),
                     ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: ElevatedButton(
-                      onPressed: selectedCategories.length >= 5
-                          ? () {
-                              // Navigate to DisplayPage
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => DisplayPage(),
-                                ),
-                              );
-                            }
-                          : null,
-                      child: Text('Next'),
-                    ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           );
