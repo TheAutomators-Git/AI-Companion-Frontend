@@ -47,10 +47,15 @@ class _DisplayPageState extends State<DisplayPage> {
                   CarouselSlider.builder(
                     itemCount: _imageUrls.length,
                     itemBuilder: (context, index, realIndex) {
-                      return Image.network(
-                        _imageUrls[index],
-                        fit: BoxFit.cover,
-                        width: double.infinity,
+                      return Container(
+                        constraints: BoxConstraints(
+                          maxWidth: 350, // Set max width to 400px
+                        ),
+                        child: Image.network(
+                          _imageUrls[index],
+                          fit: BoxFit.cover,
+                          width: double.infinity,
+                        ),
                       );
                     },
                     options: CarouselOptions(
@@ -79,7 +84,6 @@ class _DisplayPageState extends State<DisplayPage> {
                       },
                     ),
                   ),
-                  // Right arrow
                   Positioned(
                     right: 8,
                     top: 0,
