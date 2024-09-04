@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'categories_page.dart'; // Import the CategoriesPage
+import 'display_page.dart'; // Import the DisplayPage
 
 class LoginPage extends StatelessWidget {
   final TextEditingController _usernameController = TextEditingController();
@@ -75,12 +75,7 @@ class LoginPage extends StatelessWidget {
                         Flexible(
                           child: ElevatedButton(
                             onPressed: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => CategoriesPage(),
-                                ),
-                              );
+                              Navigator.pushNamed(context, '/display');
                             },
                             style: ElevatedButton.styleFrom(
                               shape: RoundedRectangleBorder(

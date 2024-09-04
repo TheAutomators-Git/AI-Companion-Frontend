@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'dart:typed_data';
+import 'package:provider/provider.dart'; // Import provider
+import '../providers/category_selection_provider.dart'; // Import the provider
 
 class HomePage extends StatefulWidget {
   final String apiUrl;
-
   const HomePage({Key? key, required this.apiUrl}) : super(key: key);
 
   @override
@@ -19,43 +19,9 @@ class _HomePageState extends State<HomePage> {
       "sender": "bot",
       "message": "Hello and welcome to Favlist, your Personalized AI Companion."
     },
-    {
-      "sender": "bot",
-      "message":
-          "My purpose is to help you upload and save a summary of the most important parts of your life. Every human has a special mix of likes and favorites - your personal interest graph is as unique as your fingerprint - your story deserves to be saved and shared! Uploading part of your mind will have a number of benefits."
-    },
-    {
-      "sender": "bot",
-      "message":
-          "With my help, you will be able to learn new insights about yourself. I will be able to provide recommendations that are curated to your unique tastes. I will create beautiful graphics that describe your life and favorites. And I will be a permanent way to save and store what is important to you."
-    },
-    {"sender": "bot", "message": "<SELECTOR />"}
   ];
   TextEditingController _controller = TextEditingController();
   bool _isLoading = false;
-
-  final List<String> categories = [
-    'Lifestyle',
-    'Career/School',
-    'Sports',
-    'Hobbies',
-    'Music',
-    'Movies',
-    'TV',
-    'Art',
-    'Books',
-    'Theatre',
-    'Travel',
-    'Fashion',
-    'Nature',
-    'Food',
-    'Cars',
-    'Technology',
-    'Pets',
-    'Fitness/Wellness',
-    'Gaming'
-  ];
-  Set<String> selectedItems = {};
 
   @override
   void initState() {
@@ -114,24 +80,32 @@ class _HomePageState extends State<HomePage> {
     setState(() {
       _isLoading = true;
     });
+
     try {
+      // Access the provider's selected categories
+      final selectedItems =
+          Provider.of<CategorySelectionProvider>(context, listen: false)
+              .getSelectedCategoryNames([
+    'Music', 'Art', 'Travel', 'Technology', 'Sports', 'Cooking',
+    'Fitness', 'Gaming', 'Reading', 'Movies', 'Photography',
+    'Science', 'Writing', 'Fashion', 'History', 'Nature',
+    'Dance', 'Languages', 'Entrepreneurship'
+  ]);
+      print(answer);
+      print(selectedItems.toString());
+
       var response = await http.post(
         Uri.parse('${widget.apiUrl}/api/question'),
         headers: <String, String>{
           'Content-Type': 'application/json',
         },
         body: jsonEncode(<String, dynamic>{
-          'name': 'Bilal Rana',
+          'name': 'Test User',
           'answer': answer,
           'id': 'ABC456',
-          'topics': selectedItems.toList(),
+          'topics': selectedItems,
         }),
       );
-
-      print(response.statusCode);
-
-      print(response.body);
-
       if (response.statusCode == 200) {
         var data = jsonDecode(response.body);
         if (data['completed'] == true) {
@@ -185,10 +159,6 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget _buildMessage(Map<String, dynamic> message, bool isLast) {
-    if (message['message'] == '<SELECTOR />') {
-      return _buildSelector();
-    }
-
     bool isUser = message['sender'] == 'user';
     double maxWidth = MediaQuery.of(context).size.width * 0.7;
 
@@ -244,115 +214,11 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Widget _buildSelector() {
-    double maxWidth = MediaQuery.of(context).size.width * 0.7;
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Container(
-          margin: const EdgeInsets.symmetric(vertical: 5),
-          alignment: Alignment.centerLeft,
-          child: ConstrainedBox(
-            constraints: BoxConstraints(
-              maxWidth: maxWidth,
-            ),
-            child: Container(
-              margin: const EdgeInsets.symmetric(vertical: 2),
-              padding: const EdgeInsets.all(10),
-              decoration: const BoxDecoration(
-                  color: Color(0xFFFF5757),
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.zero,
-                    topRight: Radius.circular(10),
-                    bottomLeft: Radius.zero,
-                    bottomRight: Radius.zero,
-                  )),
-              child: const Text(
-                "Please select a list of preferences suitable for you!",
-                style: TextStyle(color: Colors.white),
-              ),
-            ),
-          ),
-        ),
-        Column(
-          children: categories.asMap().entries.map((entry) {
-            int idx = entry.key;
-            String category = entry.value;
-
-            return Container(
-                child: InkWell(
-              onTap: () {
-                setState(() {
-                  if (!selectedItems.contains(category)) {
-                    if (selectedItems.length < 5) {
-                      selectedItems.add(category);
-                    } else {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content:
-                              Text('You can select only up to 5 categories'),
-                        ),
-                      );
-                    }
-                  } else {
-                    selectedItems.remove(category);
-                  }
-                });
-              },
-              child: Container(
-                margin: const EdgeInsets.symmetric(vertical: 5),
-                padding:
-                    const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
-                width: MediaQuery.of(context).size.width * 0.7,
-                decoration: const BoxDecoration(
-                  color: Color(0xFFFF5757),
-                ),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: Text(
-                        '${idx + 1}. $category',
-                        style: const TextStyle(color: Colors.white),
-                      ),
-                    ),
-                    Checkbox(
-                      value: selectedItems.contains(category),
-                      onChanged: (bool? isChecked) {
-                        setState(() {
-                          if (isChecked != null && isChecked) {
-                            if (selectedItems.length < 5) {
-                              selectedItems.add(category);
-                            } else {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                  content: Text(
-                                      'You can select only up to 5 categories'),
-                                ),
-                              );
-                            }
-                          } else {
-                            selectedItems.remove(category);
-                          }
-                        });
-                      },
-                      checkColor: Colors.white,
-                      activeColor: const Color.fromARGB(255, 139, 39, 39),
-                    ),
-                  ],
-                ),
-              ),
-            ));
-          }).toList(),
-        )
-      ],
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-        padding: const EdgeInsets.all(20),
+        padding: const EdgeInsets.fromLTRB(20,20,20,30),
         child: Column(
           children: [
             Row(
@@ -384,30 +250,42 @@ class _HomePageState extends State<HomePage> {
                 child: CircularProgressIndicator(),
               ),
             const SizedBox(height: 10),
-            TextField(
-              controller: _controller,
-              style: const TextStyle(color: Colors.white),
-              decoration: InputDecoration(
-                hintText: 'Type your message...',
-                hintStyle: const TextStyle(color: Colors.white54),
-                suffixIcon: IconButton(
-                  onPressed: _sendMessage,
-                  icon: const Icon(Icons.send, color: Colors.white),
-                ),
-                filled: true,
-                fillColor: const Color.fromARGB(255, 57, 56, 56),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(30),
-                  borderSide: BorderSide.none,
-                ),
-                contentPadding:
-                    const EdgeInsets.symmetric(vertical: 14, horizontal: 20),
-              ),
-            ),
+            Padding(
+              padding: const EdgeInsets.all(0),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: TextFormField(
+                      controller: _controller,
+                      decoration: const InputDecoration(
+                        labelText: 'Type a message...',
+                        border: OutlineInputBorder(),
+                        filled: true,
+                        fillColor: Color.fromARGB(0, 255, 255, 255),
+                      ),
+                      enabled: !_isLoading,
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  SizedBox(
+                    width: 50,
+                    height: 50,
+                    child: ElevatedButton(
+                      onPressed: _isLoading ? null : _sendMessage,
+                      style: ElevatedButton.styleFrom(
+                        padding: const EdgeInsets.all(12.0),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                      ),
+                      child: const Icon(Icons.send),
+                    ),
+                  ),
+                ],
+              ),),
           ],
         ),
       ),
-      backgroundColor: const Color(0xFF232323),
     );
   }
 }

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart'; // Import provider
+import '../providers/category_selection_provider.dart'; // Import the provider
 
 class CategoriesPage extends StatefulWidget {
   @override
@@ -13,16 +15,14 @@ class _CategoriesPageState extends State<CategoriesPage> {
     'Dance', 'Languages', 'Entrepreneurship'
   ];
 
-  Set<int> selectedCategories = Set<int>();
   String warningMessage = '';
-
-  // Method to convert selected indices to category names
-  List<String> getSelectedCategoryNames() {
-    return selectedCategories.map((index) => categories[index]).toList();
-  }
 
   @override
   Widget build(BuildContext context) {
+    // Access the provider
+    final categoryProvider = Provider.of<CategorySelectionProvider>(context);
+    final selectedCategories = categoryProvider.selectedCategories;
+
     return Scaffold(
       appBar: AppBar(
         title: Text('Select Categories'),
@@ -77,11 +77,11 @@ class _CategoriesPageState extends State<CategoriesPage> {
                             onTap: () {
                               setState(() {
                                 if (selectedCategories.contains(index)) {
-                                  selectedCategories.remove(index);
+                                  categoryProvider.toggleCategory(index);
                                   warningMessage = '';
                                 } else {
                                   if (selectedCategories.length < 5) {
-                                    selectedCategories.add(index);
+                                    categoryProvider.toggleCategory(index);
                                     warningMessage = '';
                                   } else {
                                     warningMessage =
@@ -121,6 +121,7 @@ class _CategoriesPageState extends State<CategoriesPage> {
                         child: ElevatedButton(
                           onPressed: selectedCategories.length >= 5
                               ? () {
+                                  Navigator.pushNamed(context, '/home');
                                 }
                               : null,
                           style: ElevatedButton.styleFrom(

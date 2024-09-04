@@ -15,6 +15,7 @@ dependencies:
   cupertino_icons: ^1.0.6
   http: ^0.13.3
   flutter_dotenv: ^5.0.2
+  provider: ^6.0.3
 
 
 dev_dependencies:
@@ -25,5 +26,9 @@ dev_dependencies:
 flutter:
   assets:
     - lib/assets/logo.png
+    - lib/assets/screen1.png
+    - lib/assets/screen2.jpg
+    - lib/assets/screen3.jpg
     - .env
   uses-material-design: true
+
