@@ -9,10 +9,10 @@ class CategoriesPage extends StatefulWidget {
 
 class _CategoriesPageState extends State<CategoriesPage> {
   final List<String> categories = [
-    'Music', 'Art', 'Travel', 'Technology', 'Sports', 'Cooking',
-    'Fitness', 'Gaming', 'Reading', 'Movies', 'Photography',
-    'Science', 'Writing', 'Fashion', 'History', 'Nature',
-    'Dance', 'Languages', 'Entrepreneurship'
+    'Lifestyle', 'Career/School', 'Sports', 'Hobbies', 'Music', 'Movies',
+    'TV', 'Art', 'Books', 'Theatre', 'Travel',
+    'Fashion', 'Nature', 'Food', 'Cars', 'Technology',
+    'Pets', 'Fitness/Wellness', 'Gaming'
   ];
 
   String warningMessage = '';

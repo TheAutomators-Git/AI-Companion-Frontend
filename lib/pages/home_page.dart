@@ -86,10 +86,10 @@ class _HomePageState extends State<HomePage> {
       final selectedItems =
           Provider.of<CategorySelectionProvider>(context, listen: false)
               .getSelectedCategoryNames([
-    'Music', 'Art', 'Travel', 'Technology', 'Sports', 'Cooking',
-    'Fitness', 'Gaming', 'Reading', 'Movies', 'Photography',
-    'Science', 'Writing', 'Fashion', 'History', 'Nature',
-    'Dance', 'Languages', 'Entrepreneurship'
+    'Lifestyle', 'Career/School', 'Sports', 'Hobbies', 'Music', 'Movies',
+    'TV', 'Art', 'Books', 'Theatre', 'Travel',
+    'Fashion', 'Nature', 'Food', 'Cars', 'Technology',
+    'Pets', 'Fitness/Wellness', 'Gaming'
   ]);
       print(answer);
       print(selectedItems.toString());
