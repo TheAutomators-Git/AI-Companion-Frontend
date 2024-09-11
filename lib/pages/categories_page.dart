@@ -46,7 +46,7 @@ class _CategoriesPageState extends State<CategoriesPage> {
                       child: Align(
                         alignment: Alignment.centerLeft,
                         child: Text(
-                          "Please Select Some Categories to Continue from below",
+                          "To get started, please select the five categories that are most important to you-this will help your AI Companion tailor the experience to your unique interests.",
                           style: TextStyle(fontSize: 20),
                         ),
                       ),

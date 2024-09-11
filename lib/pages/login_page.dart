@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'display_page.dart'; // Import the DisplayPage
+import 'sign_up.dart'; // Import the SignUpPage
 
 class LoginPage extends StatelessWidget {
   final TextEditingController _usernameController = TextEditingController();
@@ -108,8 +109,19 @@ class LoginPage extends StatelessWidget {
                         ),
                         SizedBox(width: 5),
                         TextButton(
-                            onPressed: () => {},
-                            child: Text("Sign Up!", style: TextStyle(fontSize: 15)))
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => SignUpPage(),
+                              ),
+                            );
+                          },
+                          child: Text(
+                            "Sign Up!",
+                            style: TextStyle(fontSize: 15),
+                          ),
+                        )
                       ],
                     )
                   ],

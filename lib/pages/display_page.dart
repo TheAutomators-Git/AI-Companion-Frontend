@@ -11,13 +11,11 @@ class _DisplayPageState extends State<DisplayPage> {
   int _currentIndex = 0;
 
   final List<String> _imageUrls = [
-    'lib/assets/screen1.png',
     'lib/assets/screen2.jpg',
     'lib/assets/screen3.jpg',
   ];
 
   final List<String> _titles = [
-    'Welcome to Favlist!',
     'Upload and Save a Summary of Your Life',
     'Learn New Insights About Yourself',
   ];
@@ -25,14 +23,6 @@ class _DisplayPageState extends State<DisplayPage> {
   @override
   Widget build(BuildContext context) {
     final List<Widget> _descriptions = [
-      const Padding(
-        padding: EdgeInsets.all(16.0),
-        child: Text(
-          'Hello and welcome to Favlist, your Personalized AI Companion.',
-          style: TextStyle(fontSize: 18, color: Colors.white),
-          textAlign: TextAlign.center,
-        ),
-      ),
       const Padding(
         padding: EdgeInsets.all(16.0),
         child: Text(
