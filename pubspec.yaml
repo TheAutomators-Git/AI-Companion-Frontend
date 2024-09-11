@@ -5,23 +5,32 @@ publish_to: "none"
 version: 1.0.0+1
 
 environment:
-    sdk: ">=3.4.3 <4.0.0"
+  sdk: ">=3.4.3 <4.0.0"
 
 dependencies:
-    flutter:
-        sdk: flutter
-    flutter_svg: ^2.0.7
-    cupertino_icons: ^1.0.6
-    http: ^0.13.3
-    flutter_dotenv: ^5.0.2
+  flutter:
+    sdk: flutter
+  carousel_slider: ^5.0.0
+  intl: ^0.18.1
+  intl_phone_field: ^3.1.0
+  flutter_svg: ^2.0.7
+  cupertino_icons: ^1.0.6
+  http: ^0.13.3
+  flutter_dotenv: ^5.0.2
+  provider: ^6.0.3
+
 
 dev_dependencies:
-    flutter_test:
-        sdk: flutter
-    flutter_lints: ^3.0.0
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^3.0.0
 
 flutter:
-    assets:
-        - lib/assets/logo.png
-        - .env
-    uses-material-design: true
+  assets:
+    - lib/assets/logo.png
+    - lib/assets/screen1.png
+    - lib/assets/screen2.jpg
+    - lib/assets/screen3.jpg
+    - .env
+  uses-material-design: true
+

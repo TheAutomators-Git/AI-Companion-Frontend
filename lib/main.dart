@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:provider/provider.dart'; // Import provider
 import 'pages/introduction_page.dart';
 import 'pages/login_page.dart';
 import 'pages/home_page.dart';
+import 'pages/categories_page.dart';
+import 'pages/display_page.dart';
+import 'providers/category_selection_provider.dart'; // Import the provider
 
 void main() async {
-  // Ensure that the Flutter bindings are initialized before using Dotenv
   WidgetsFlutterBinding.ensureInitialized();
-
-  // Load the .env file
   await dotenv.load(fileName: ".env");
 
   runApp(MyApp());
@@ -34,24 +35,29 @@ class MyApp extends StatelessWidget {
 
     MaterialColor customColor = const MaterialColor(0xFFFF5757, color);
 
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'AI Companion App',
-      theme: ThemeData(
-        primarySwatch: customColor,
-        primaryColor: customColor,
-        brightness: Brightness.dark,
-        colorScheme: ColorScheme.fromSeed(
-            seedColor: const Color(0xFFFF5757), brightness: Brightness.dark),
-        useMaterial3: true,
+    return ChangeNotifierProvider( // Wrap your app with ChangeNotifierProvider
+      create: (context) => CategorySelectionProvider(), // Provide CategorySelectionProvider
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        title: 'AI Companion App',
+        theme: ThemeData(
+          primarySwatch: customColor,
+          primaryColor: customColor,
+          brightness: Brightness.dark,
+          colorScheme: ColorScheme.fromSeed(
+              seedColor: const Color(0xFFFF5757), brightness: Brightness.dark),
+          useMaterial3: true,
+        ),
+        initialRoute: '/',
+        routes: {
+          '/': (context) => IntroductionPage(),
+          '/login': (context) => LoginPage(),
+          '/home': (context) => HomePage(apiUrl: apiUrl),
+          '/introduction': (context) => IntroductionPage(),
+          '/display': (context) => DisplayPage(),
+          '/categories': (context) => CategoriesPage(),
+        },
       ),
-      initialRoute: '/',
-      routes: {
-        '/': (context) => IntroductionPage(),
-        '/login': (context) => LoginPage(),
-        '/home': (context) =>
-            HomePage(apiUrl: apiUrl), // Ensure HomePage accepts apiUrl
-      },
     );
   }
 }

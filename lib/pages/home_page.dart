@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'dart:typed_data';
+import 'package:provider/provider.dart'; // Import provider
+import '../providers/category_selection_provider.dart'; // Import the provider
 
 class HomePage extends StatefulWidget {
   final String apiUrl;
-
   const HomePage({Key? key, required this.apiUrl}) : super(key: key);
 
   @override
@@ -13,79 +14,120 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  List<Map<String, String>> messages = [
+  List<Map<String, dynamic>> messages = [
     {
       "sender": "bot",
       "message": "Hello and welcome to Favlist, your Personalized AI Companion."
     },
-    {
-      "sender": "bot",
-      "message":
-          "My purpose is to help you upload and save a summary of the most important parts of your life. Every human has a special mix of likes and favorites - your personal interest graph is as unique as your fingerprint - your story deserves to be saved and shared! Uploading part of your mind will have a number of benefits."
-    },
-    {
-      "sender": "bot",
-      "message":
-          "With my help, you will be able to learn new insights about yourself. I will be able to provide recommendations that are curated to your unique tastes. I will create beautiful graphics that describe your life and favorites. And I will be a permanent way to save and store what is important to you."
-    },
-    {"sender": "bot", "message": "<SELECTOR />"}
   ];
   TextEditingController _controller = TextEditingController();
   bool _isLoading = false;
-
-  final List<String> categories = [
-    'Lifestyle',
-    'Career/School',
-    'Sports',
-    'Hobbies',
-    'Music',
-    'Movies',
-    'TV',
-    'Art',
-    'Books',
-    'Theatre',
-    'Travel',
-    'Fashion',
-    'Nature',
-    'Food',
-    'Cars',
-    'Technology',
-    'Pets',
-    'Fitness/Wellness',
-    'Gaming'
-  ];
-  Set<String> selectedItems = {};
 
   @override
   void initState() {
     super.initState();
   }
 
+  void _saveConversation() async {
+    try {
+      var response = await http.post(
+        Uri.parse('${widget.apiUrl}/api/save'),
+        headers: <String, String>{
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode(<String, dynamic>{
+          'name': 'User',
+          'id': 'AB123',
+        }),
+      );
+
+      if (response.statusCode != 200) {
+        throw Exception('Failed to save conversation');
+      }
+    } catch (e) {
+      print('Error saving conversation: $e');
+    }
+  }
+
+  void _saveImage() async {
+    try {
+      var response = await http.post(
+        Uri.parse('${widget.apiUrl}/api/generate'),
+        headers: <String, String>{
+          'Content-Type': 'application/json',
+        },
+        body:
+            jsonEncode(<String, dynamic>{'name': 'Bilal Rana', 'id': 'ABC456'}),
+      );
+
+      if (response.statusCode == 200) {
+        var data = jsonDecode(response.body);
+        Uint8List bytes = base64Decode(data['image']);
+        setState(() {
+          messages.add({"sender": "bot", "image": bytes});
+        });
+      } else {
+        throw Exception('Failed to load image');
+      }
+    } catch (e) {
+      setState(() {
+        messages.add({"sender": "bot", "message": "Something Went Wrong :("});
+      });
+    }
+  }
+
   void _pingAPI(String answer) async {
     setState(() {
       _isLoading = true;
     });
+
     try {
+      // Access the provider's selected categories
+      final selectedItems =
+          Provider.of<CategorySelectionProvider>(context, listen: false)
+              .getSelectedCategoryNames([
+    'Lifestyle', 'Career/School', 'Sports', 'Hobbies', 'Music', 'Movies',
+    'TV', 'Art', 'Books', 'Theatre', 'Travel',
+    'Fashion', 'Nature', 'Food', 'Cars', 'Technology',
+    'Pets', 'Fitness/Wellness', 'Gaming'
+  ]);
+      print(answer);
+      print(selectedItems.toString());
+
       var response = await http.post(
         Uri.parse('${widget.apiUrl}/api/question'),
         headers: <String, String>{
           'Content-Type': 'application/json',
         },
         body: jsonEncode(<String, dynamic>{
-          'name': 'User',
+          'name': 'Test User',
           'answer': answer,
-          'id': 'AB123',
-          'topics': selectedItems.toList(),
+          'id': 'ABC456',
+          'topics': selectedItems,
         }),
       );
-
       if (response.statusCode == 200) {
         var data = jsonDecode(response.body);
+        if (data['completed'] == true) {
+          setState(() {
+            messages.add({
+              "sender": "bot",
+              "message":
+                  'Please wait while we generate your personalized image!'
+            });
+          });
+          _saveImage();
+        } else {
+          setState(() {
+            messages.add({"sender": "bot", "message": data['question']});
+          });
+        }
+
         setState(() {
-          messages.add({"sender": "bot", "message": data['question']});
           _isLoading = false;
         });
       } else {
+        _saveConversation();
         throw Exception('Failed to load response');
       }
     } catch (e) {
@@ -107,11 +149,16 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
-  Widget _buildMessage(Map<String, String> message, bool isLast) {
-    if (message['message'] == '<SELECTOR />') {
-      return _buildSelector();
-    }
+  Widget _saveButton() {
+    return ElevatedButton(
+      onPressed: () {
+        _saveConversation();
+      },
+      child: const Text('Save Conversation'),
+    );
+  }
 
+  Widget _buildMessage(Map<String, dynamic> message, bool isLast) {
     bool isUser = message['sender'] == 'user';
     double maxWidth = MediaQuery.of(context).size.width * 0.7;
 
@@ -144,10 +191,15 @@ class _HomePageState extends State<HomePage> {
                         bottomRight: Radius.circular(10),
                       ),
               ),
-              child: Text(
-                message['message']!,
-                style: const TextStyle(color: Colors.white),
-              ),
+              child: message.containsKey('image')
+                  ? Image.memory(
+                      message['image'],
+                      fit: BoxFit.cover,
+                    )
+                  : Text(
+                      message['message']!,
+                      style: const TextStyle(color: Colors.white),
+                    ),
             ),
           ),
         ),
@@ -162,115 +214,11 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Widget _buildSelector() {
-    double maxWidth = MediaQuery.of(context).size.width * 0.7;
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Container(
-          margin: const EdgeInsets.symmetric(vertical: 5),
-          alignment: Alignment.centerLeft,
-          child: ConstrainedBox(
-            constraints: BoxConstraints(
-              maxWidth: maxWidth,
-            ),
-            child: Container(
-              margin: const EdgeInsets.symmetric(vertical: 2),
-              padding: const EdgeInsets.all(10),
-              decoration: const BoxDecoration(
-                  color: Color(0xFFFF5757),
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.zero,
-                    topRight: Radius.circular(10),
-                    bottomLeft: Radius.zero,
-                    bottomRight: Radius.zero,
-                  )),
-              child: const Text(
-                "Please select a list of preferences suitable for you!",
-                style: TextStyle(color: Colors.white),
-              ),
-            ),
-          ),
-        ),
-        Column(
-          children: categories.asMap().entries.map((entry) {
-            int idx = entry.key;
-            String category = entry.value;
-
-            return Container(
-                child: InkWell(
-              onTap: () {
-                setState(() {
-                  if (!selectedItems.contains(category)) {
-                    if (selectedItems.length < 5) {
-                      selectedItems.add(category);
-                    } else {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content:
-                              Text('You can select only up to 5 categories'),
-                        ),
-                      );
-                    }
-                  } else {
-                    selectedItems.remove(category);
-                  }
-                });
-              },
-              child: Container(
-                margin: const EdgeInsets.symmetric(vertical: 5),
-                padding:
-                    const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
-                width: MediaQuery.of(context).size.width * 0.7,
-                decoration: const BoxDecoration(
-                  color: Color(0xFFFF5757),
-                ),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: Text(
-                        '${idx + 1}. $category', // Display index and category
-                        style: const TextStyle(color: Colors.white),
-                      ),
-                    ),
-                    Checkbox(
-                      value: selectedItems.contains(category),
-                      onChanged: (bool? isChecked) {
-                        setState(() {
-                          if (isChecked != null && isChecked) {
-                            if (selectedItems.length < 5) {
-                              selectedItems.add(category);
-                            } else {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                  content: Text(
-                                      'You can select only up to 5 categories'),
-                                ),
-                              );
-                            }
-                          } else {
-                            selectedItems.remove(category);
-                          }
-                        });
-                      },
-                      checkColor: Colors.white,
-                      activeColor: const Color.fromARGB(255, 139, 39, 39),
-                    ),
-                  ],
-                ),
-              ),
-            ));
-          }).toList(),
-        )
-      ],
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-        padding: const EdgeInsets.all(20),
+        padding: const EdgeInsets.fromLTRB(20,20,20,30),
         child: Column(
           children: [
             Row(
@@ -281,38 +229,27 @@ class _HomePageState extends State<HomePage> {
                   style: TextStyle(fontSize: 26, color: Colors.white),
                   textAlign: TextAlign.left,
                 ),
-                SizedBox(
-                  width: 50,
-                  height: 50,
-                  child: ElevatedButton(
-                    onPressed: () => {Navigator.pushNamed(context, '/login')},
-                    style: ElevatedButton.styleFrom(
-                      padding: const EdgeInsets.all(12.0),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(4),
-                      ),
-                    ),
-                    child: const Icon(Icons.arrow_back),
-                  ),
-                )
+                IconButton(
+                  onPressed: () {},
+                  icon: const Icon(Icons.settings, color: Colors.white),
+                ),
               ],
             ),
-            const SizedBox(
-              height: 20,
-            ),
+            const SizedBox(height: 10),
             Expanded(
               child: ListView.builder(
-                reverse: true,
                 itemCount: messages.length,
                 itemBuilder: (context, index) {
-                  return _buildMessage(
-                      messages[messages.length - 1 - index], index == 0);
+                  bool isLast = index == messages.length - 1;
+                  return _buildMessage(messages[index], isLast);
                 },
               ),
             ),
-            const SizedBox(
-              height: 20,
-            ),
+            if (messages.isEmpty)
+              const Center(
+                child: CircularProgressIndicator(),
+              ),
+            const SizedBox(height: 10),
             Padding(
               padding: const EdgeInsets.all(0),
               child: Row(
@@ -343,10 +280,9 @@ class _HomePageState extends State<HomePage> {
                       ),
                       child: const Icon(Icons.send),
                     ),
-                  )
+                  ),
                 ],
-              ),
-            ),
+              ),),
           ],
         ),
       ),
