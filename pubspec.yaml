@@ -31,6 +31,7 @@ flutter:
     - lib/assets/screen1.png
     - lib/assets/screen2.jpg
     - lib/assets/screen3.jpg
+    - lib/assets/favlist.png
     - .env
   uses-material-design: true
 
