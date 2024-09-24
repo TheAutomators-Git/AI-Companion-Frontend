@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 import 'package:intl_phone_field/intl_phone_field.dart';
 import 'package:intl/intl.dart';
+import 'dart:convert';
 import 'login_page.dart';
-import 'categories_page.dart'; // Import the CategoriesPage
+import 'categories_page.dart';
 
 class SignUpPage extends StatefulWidget {
   @override
@@ -10,12 +12,16 @@ class SignUpPage extends StatefulWidget {
 }
 
 class _SignUpPageState extends State<SignUpPage> {
-  final TextEditingController _usernameController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _cityController = TextEditingController();
   final TextEditingController _stateController = TextEditingController();
   final TextEditingController _phoneController = TextEditingController();
   DateTime? _selectedDate;
+  bool _isLoading = false;
+
+  // Replace with your FastAPI backend URL
+  final String _backendUrl = "http://127.0.0.1:8000/api/register";
 
   @override
   Widget build(BuildContext context) {
@@ -34,7 +40,7 @@ class _SignUpPageState extends State<SignUpPage> {
                 top: -80,
                 left: -60,
                 child: Image.asset(
-                  'lib/assets/favlist.png', // Make sure the image is listed in pubspec.yaml
+                  'lib/assets/favlist.png', // Ensure the image is listed in pubspec.yaml
                   width: 250,
                   height: 250,
                 ),
@@ -56,8 +62,9 @@ class _SignUpPageState extends State<SignUpPage> {
                         ),
                         const SizedBox(height: 40),
                         _buildTextField(
-                          controller: _usernameController,
-                          labelText: 'Username',
+                          controller: _emailController,
+                          labelText: 'Email',
+                          keyboardType: TextInputType.emailAddress,
                         ),
                         const SizedBox(height: 20),
                         _buildTextField(
@@ -96,24 +103,16 @@ class _SignUpPageState extends State<SignUpPage> {
                           ),
                         ),
                         const SizedBox(height: 40),
-                        Row(
-                          children: [
-                            Flexible(
-                              child: ElevatedButton(
-                                onPressed: () {
-                                  // Navigate to CategoriesPage when sign up is clicked
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => CategoriesPage(),
-                                    ),
-                                  );
-                                },
+                        _isLoading
+                            ? CircularProgressIndicator()
+                            : ElevatedButton(
+                                onPressed: _signUpUser,
                                 style: ElevatedButton.styleFrom(
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(4.0),
                                   ),
-                                  padding: const EdgeInsets.symmetric(vertical: 18),
+                                  padding:
+                                      const EdgeInsets.symmetric(vertical: 18),
                                   minimumSize: const Size(double.infinity, 45),
                                 ),
                                 child: const Text(
@@ -121,9 +120,6 @@ class _SignUpPageState extends State<SignUpPage> {
                                   style: TextStyle(fontSize: 16),
                                 ),
                               ),
-                            ),
-                          ],
-                        ),
                         const SizedBox(height: 20),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
@@ -167,16 +163,24 @@ class _SignUpPageState extends State<SignUpPage> {
     required TextEditingController controller,
     required String labelText,
     bool obscureText = false,
+    TextInputType keyboardType = TextInputType.text,
   }) {
     return TextFormField(
       controller: controller,
       obscureText: obscureText,
+      keyboardType: keyboardType,
       decoration: InputDecoration(
-        labelText: labelText, 
+        labelText: labelText,
         border: const OutlineInputBorder(),
         filled: true,
         fillColor: const Color.fromARGB(0, 255, 255, 255),
       ),
+      validator: (value) {
+        if (labelText == 'Email' && (value == null || !value.contains('@'))) {
+          return 'Please enter a valid email address';
+        }
+        return null;
+      },
     );
   }
 
@@ -215,5 +219,65 @@ class _SignUpPageState extends State<SignUpPage> {
         ),
       ),
     );
+  }
+
+  Future<void> _signUpUser() async {
+    if (_emailController.text.isEmpty ||
+        _passwordController.text.isEmpty ||
+        _selectedDate == null ||
+        _phoneController.text.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Please fill in all fields')),
+      );
+      return;
+    }
+
+    setState(() {
+      _isLoading = true;
+    });
+
+    // Prepare the request payload
+    Map<String, dynamic> requestData = {
+      'id': _emailController.text,  // Assuming email is used as ID for now
+      'email': _emailController.text,
+      'password': _passwordController.text,
+      'birthday': DateFormat('yyyy-MM-dd').format(_selectedDate!),
+      'contact': _phoneController.text,
+    };
+
+    try {
+      // Send the POST request to the backend
+      final response = await http.post(
+        Uri.parse(_backendUrl),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode(requestData),
+      );
+
+      if (response.statusCode == 200) {
+        // Navigate to CategoriesPage on success
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => CategoriesPage(),
+          ),
+        );
+      } else {
+        // Handle error response
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Sign up failed: ${response.body}')),
+        );
+      }
+    } catch (e) {
+      // Handle network errors
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('An error occurred: $e')),
+      );
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
   }
 }
