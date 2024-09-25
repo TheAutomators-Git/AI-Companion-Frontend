@@ -225,7 +225,9 @@ class _SignUpPageState extends State<SignUpPage> {
     if (_emailController.text.isEmpty ||
         _passwordController.text.isEmpty ||
         _selectedDate == null ||
-        _phoneController.text.isEmpty) {
+        _phoneController.text.isEmpty ||
+        _cityController.text.isEmpty ||
+        _stateController.text.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Please fill in all fields')),
       );
@@ -243,6 +245,8 @@ class _SignUpPageState extends State<SignUpPage> {
       'password': _passwordController.text,
       'birthday': DateFormat('yyyy-MM-dd').format(_selectedDate!),
       'contact': _phoneController.text,
+      'city': _cityController.text,
+      'state': _stateController.text,
     };
 
     try {
