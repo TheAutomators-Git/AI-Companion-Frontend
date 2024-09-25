@@ -13,12 +13,11 @@ class LoginPage extends StatelessWidget {
         children: [
           Positioned(
             top: -30,
-            left: -20,
+            left: 20,
             child: Image.asset(
               'lib/assets/favlist.png',
-              height: 200, // Adjust the height as needed
-              width: 200,  // Adjust the width as needed
-              fit: BoxFit.cover,
+              height: 150,
+              width: 150,
             ),
           ),
           LayoutBuilder(
@@ -54,7 +53,8 @@ class LoginPage extends StatelessWidget {
                           ),
                         ),
                         const SizedBox(
-                            height: 20), // Spacing between username and password fields
+                            height:
+                                20), // Spacing between username and password fields
                         TextFormField(
                           controller: _passwordController,
                           obscureText: true, // Use true to hide password
@@ -66,7 +66,8 @@ class LoginPage extends StatelessWidget {
                           ),
                         ),
                         const SizedBox(
-                            height: 10), // Spacing between password field and the button
+                            height:
+                                10), // Spacing between password field and the button
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
@@ -75,8 +76,9 @@ class LoginPage extends StatelessWidget {
                                 style: ButtonStyle(
                                   overlayColor: MaterialStateProperty.all(
                                       Colors.transparent), // No splash on press
-                                  padding: MaterialStateProperty.all<EdgeInsets>(
-                                      EdgeInsets.zero),
+                                  padding:
+                                      MaterialStateProperty.all<EdgeInsets>(
+                                          EdgeInsets.zero),
                                 ),
                                 child: Text("Forgot Password?",
                                     style: TextStyle(fontSize: 15)))
@@ -111,7 +113,8 @@ class LoginPage extends StatelessWidget {
                           ],
                         ),
                         const SizedBox(
-                            height: 20), // Spacing between the button and the text
+                            height:
+                                20), // Spacing between the button and the text
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [

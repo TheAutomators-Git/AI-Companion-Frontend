@@ -53,7 +53,8 @@ class _DisplayPageState extends State<DisplayPage> {
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color(0xFFfc5656),
                 foregroundColor: Colors.white,
-                padding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 32.0),
+                padding: const EdgeInsets.symmetric(
+                    vertical: 16.0, horizontal: 32.0),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(5.0),
                 ),
@@ -100,7 +101,8 @@ class _DisplayPageState extends State<DisplayPage> {
                               _imageUrls[index],
                               fit: BoxFit.contain,
                               width: double.infinity,
-                              height: 300, // Set a specific height for the images
+                              height:
+                                  300, // Set a specific height for the images
                             ),
                           ),
                           Center(child: _descriptions[_currentIndex]),
@@ -142,13 +144,12 @@ class _DisplayPageState extends State<DisplayPage> {
             ),
           ),
           Positioned(
-            top: -100,
-            left: -80,
+            top: -30,
+            left: 20,
             child: Image.asset(
-              'lib/assets/favlist.png', // Path to your logo image
-              width: 300, // Set the desired width of the logo
-              height: 300, // Set the desired height of the logo
-              fit: BoxFit.contain,
+              'lib/assets/favlist.png',
+              height: 150,
+              width: 150,
             ),
           ),
         ],

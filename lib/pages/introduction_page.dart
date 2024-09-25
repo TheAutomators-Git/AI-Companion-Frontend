@@ -53,12 +53,12 @@ class IntroductionPage extends StatelessWidget {
             ),
           ),
           Positioned(
-            top: -70,
-            left: -70,
+            top: -30,
+            left: 20,
             child: Image.asset(
               'lib/assets/favlist.png',
-              height: 300,
-              width: 300,
+              height: 150,
+              width: 150,
             ),
           ),
         ],

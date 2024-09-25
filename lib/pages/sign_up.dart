@@ -23,20 +23,19 @@ class _SignUpPageState extends State<SignUpPage> {
       body: LayoutBuilder(
         builder: (context, constraints) {
           double maxWidth = 400;
-          double formWidth = constraints.maxWidth < maxWidth
-              ? constraints.maxWidth
-              : maxWidth;
+          double formWidth =
+              constraints.maxWidth < maxWidth ? constraints.maxWidth : maxWidth;
 
           return Stack(
             children: [
               // Favorite list image at top left corner
               Positioned(
-                top: -80,
-                left: -60,
+                top: -30,
+                left: 20,
                 child: Image.asset(
-                  'lib/assets/favlist.png', // Make sure the image is listed in pubspec.yaml
-                  width: 250,
-                  height: 250,
+                  'lib/assets/favlist.png',
+                  height: 150,
+                  width: 150,
                 ),
               ),
               Center(
@@ -113,7 +112,8 @@ class _SignUpPageState extends State<SignUpPage> {
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(4.0),
                                   ),
-                                  padding: const EdgeInsets.symmetric(vertical: 18),
+                                  padding:
+                                      const EdgeInsets.symmetric(vertical: 18),
                                   minimumSize: const Size(double.infinity, 45),
                                 ),
                                 child: const Text(
@@ -172,7 +172,7 @@ class _SignUpPageState extends State<SignUpPage> {
       controller: controller,
       obscureText: obscureText,
       decoration: InputDecoration(
-        labelText: labelText, 
+        labelText: labelText,
         border: const OutlineInputBorder(),
         filled: true,
         fillColor: const Color.fromARGB(0, 255, 255, 255),
