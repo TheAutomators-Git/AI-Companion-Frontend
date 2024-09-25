@@ -14,8 +14,7 @@ class LoginPage extends StatelessWidget {
 
     try {
       final response = await http.post(
-        Uri.parse(
-            'http://127.0.0.1:8000/api/user/login'), // Updated URL for login
+        Uri.parse('http://127.0.0.1:8000/api/login'), // Updated URL for login
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({
           'email': email,
@@ -26,7 +25,7 @@ class LoginPage extends StatelessWidget {
       if (response.statusCode == 200) {
         // If the server returns a 200 OK response, navigate to the display page
         final userData = jsonDecode(response.body);
-        Navigator.pushNamed(context, '/display', arguments: userData);
+        Navigator.pushNamed(context, '/display');
       } else {
         // If the server does not return a 200 OK response, show an error message
         final errorData = jsonDecode(response.body);

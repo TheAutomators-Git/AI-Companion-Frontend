@@ -40,8 +40,8 @@ class _SignUpPageState extends State<SignUpPage> {
                 left: 20,
                 child: Image.asset(
                   'lib/assets/favlist.png', // Ensure the image is listed in pubspec.yaml
-                  width: 250,
-                  height: 250,
+                  width: 150,
+                  height: 150,
                 ),
               ),
               Center(
@@ -239,7 +239,6 @@ class _SignUpPageState extends State<SignUpPage> {
 
     // Prepare the request payload
     Map<String, dynamic> requestData = {
-      'id': _emailController.text, // Assuming email is used as ID for now
       'email': _emailController.text,
       'password': _passwordController.text,
       'birthday': DateFormat('yyyy-MM-dd').format(_selectedDate!),
@@ -260,12 +259,7 @@ class _SignUpPageState extends State<SignUpPage> {
 
       if (response.statusCode == 200) {
         // Navigate to CategoriesPage on success
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => CategoriesPage(),
-          ),
-        );
+        Navigator.pushNamed(context, '/display');
       } else {
         // Handle error response
         ScaffoldMessenger.of(context).showSnackBar(
