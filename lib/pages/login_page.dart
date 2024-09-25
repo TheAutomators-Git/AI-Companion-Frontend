@@ -1,10 +1,57 @@
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 import 'display_page.dart'; // Import the DisplayPage
 import 'sign_up.dart'; // Import the SignUpPage
 
 class LoginPage extends StatelessWidget {
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+
+  Future<void> _login(BuildContext context) async {
+    final String email = _usernameController.text;
+    final String password = _passwordController.text;
+
+    try {
+      final response = await http.post(
+        Uri.parse(
+            'http://127.0.0.1:8000/api/user/login'), // Updated URL for login
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({
+          'email': email,
+          'password': password,
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        // If the server returns a 200 OK response, navigate to the display page
+        final userData = jsonDecode(response.body);
+        Navigator.pushNamed(context, '/display', arguments: userData);
+      } else {
+        // If the server does not return a 200 OK response, show an error message
+        final errorData = jsonDecode(response.body);
+        _showErrorDialog(context, errorData['detail']);
+      }
+    } catch (error) {
+      _showErrorDialog(context, 'Something went wrong. Please try again.');
+    }
+  }
+
+  void _showErrorDialog(BuildContext context, String message) {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Error'),
+        content: Text(message),
+        actions: [
+          TextButton(
+            child: const Text('OK'),
+            onPressed: () => Navigator.of(ctx).pop(),
+          ),
+        ],
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -46,7 +93,7 @@ class LoginPage extends StatelessWidget {
                         TextFormField(
                           controller: _usernameController,
                           decoration: const InputDecoration(
-                            labelText: 'Username',
+                            labelText: 'Email',
                             border: OutlineInputBorder(),
                             filled: true,
                             fillColor: Color.fromARGB(0, 255, 255, 255),
@@ -80,7 +127,7 @@ class LoginPage extends StatelessWidget {
                                       MaterialStateProperty.all<EdgeInsets>(
                                           EdgeInsets.zero),
                                 ),
-                                child: Text("Forgot Password?",
+                                child: const Text("Forgot Password?",
                                     style: TextStyle(fontSize: 15)))
                           ],
                         ),
@@ -89,24 +136,19 @@ class LoginPage extends StatelessWidget {
                           children: [
                             Flexible(
                               child: ElevatedButton(
-                                onPressed: () {
-                                  Navigator.pushNamed(context, '/display');
-                                },
+                                onPressed: () =>
+                                    _login(context), // Call the login method
                                 style: ElevatedButton.styleFrom(
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(4.0),
                                   ),
-                                  padding: EdgeInsets.symmetric(
-                                      vertical:
-                                          18), // Adjust the vertical padding to control the button's height
-                                  minimumSize: Size(double.infinity,
-                                      45), // Sets a minimum size for the button
+                                  padding:
+                                      const EdgeInsets.symmetric(vertical: 18),
+                                  minimumSize: const Size(double.infinity, 45),
                                 ),
                                 child: const Text(
                                   'Login',
-                                  style: TextStyle(
-                                      fontSize:
-                                          16), // Optional: Adjust text size if necessary
+                                  style: TextStyle(fontSize: 16),
                                 ),
                               ),
                             ),
@@ -118,11 +160,11 @@ class LoginPage extends StatelessWidget {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Text(
+                            const Text(
                               "Don't have an account?",
                               style: TextStyle(fontSize: 15),
                             ),
-                            SizedBox(width: 5),
+                            const SizedBox(width: 5),
                             TextButton(
                               onPressed: () {
                                 Navigator.push(
@@ -132,7 +174,7 @@ class LoginPage extends StatelessWidget {
                                   ),
                                 );
                               },
-                              child: Text(
+                              child: const Text(
                                 "Sign Up!",
                                 style: TextStyle(fontSize: 15),
                               ),
