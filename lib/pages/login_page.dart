@@ -14,7 +14,8 @@ class LoginPage extends StatelessWidget {
 
     try {
       final response = await http.post(
-        Uri.parse('http://127.0.0.1:8000/api/user/login'), // Updated URL for login
+        Uri.parse(
+            'http://127.0.0.1:8000/api/user/login'), // Updated URL for login
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({
           'email': email,
@@ -40,11 +41,11 @@ class LoginPage extends StatelessWidget {
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: Text('Error'),
+        title: const Text('Error'),
         content: Text(message),
         actions: [
           TextButton(
-            child: Text('OK'),
+            child: const Text('OK'),
             onPressed: () => Navigator.of(ctx).pop(),
           ),
         ],
@@ -59,12 +60,11 @@ class LoginPage extends StatelessWidget {
         children: [
           Positioned(
             top: -30,
-            left: -20,
+            left: 20,
             child: Image.asset(
               'lib/assets/favlist.png',
-              height: 200, // Adjust the height as needed
-              width: 200,  // Adjust the width as needed
-              fit: BoxFit.cover,
+              height: 150,
+              width: 150,
             ),
           ),
           LayoutBuilder(
@@ -99,7 +99,9 @@ class LoginPage extends StatelessWidget {
                             fillColor: Color.fromARGB(0, 255, 255, 255),
                           ),
                         ),
-                        const SizedBox(height: 20), // Spacing between username and password fields
+                        const SizedBox(
+                            height:
+                                20), // Spacing between username and password fields
                         TextFormField(
                           controller: _passwordController,
                           obscureText: true, // Use true to hide password
@@ -110,18 +112,23 @@ class LoginPage extends StatelessWidget {
                             fillColor: Color.fromARGB(0, 255, 255, 255),
                           ),
                         ),
-                        const SizedBox(height: 10), // Spacing between password field and the button
+                        const SizedBox(
+                            height:
+                                10), // Spacing between password field and the button
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             TextButton(
-                              onPressed: () => {}, // Add forgot password functionality here
-                              style: ButtonStyle(
-                                overlayColor: MaterialStateProperty.all(Colors.transparent), // No splash on press
-                                padding: MaterialStateProperty.all<EdgeInsets>(EdgeInsets.zero),
-                              ),
-                              child: Text("Forgot Password?", style: TextStyle(fontSize: 15)),
-                            )
+                                onPressed: () => {},
+                                style: ButtonStyle(
+                                  overlayColor: MaterialStateProperty.all(
+                                      Colors.transparent), // No splash on press
+                                  padding:
+                                      MaterialStateProperty.all<EdgeInsets>(
+                                          EdgeInsets.zero),
+                                ),
+                                child: const Text("Forgot Password?",
+                                    style: TextStyle(fontSize: 15)))
                           ],
                         ),
                         const SizedBox(height: 40), // Spacing before the button
@@ -129,13 +136,15 @@ class LoginPage extends StatelessWidget {
                           children: [
                             Flexible(
                               child: ElevatedButton(
-                                onPressed: () => _login(context), // Call the login method
+                                onPressed: () =>
+                                    _login(context), // Call the login method
                                 style: ElevatedButton.styleFrom(
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(4.0),
                                   ),
-                                  padding: EdgeInsets.symmetric(vertical: 18),
-                                  minimumSize: Size(double.infinity, 45),
+                                  padding:
+                                      const EdgeInsets.symmetric(vertical: 18),
+                                  minimumSize: const Size(double.infinity, 45),
                                 ),
                                 child: const Text(
                                   'Login',
@@ -145,15 +154,17 @@ class LoginPage extends StatelessWidget {
                             ),
                           ],
                         ),
-                        const SizedBox(height: 20), // Spacing between the button and the text
+                        const SizedBox(
+                            height:
+                                20), // Spacing between the button and the text
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Text(
+                            const Text(
                               "Don't have an account?",
                               style: TextStyle(fontSize: 15),
                             ),
-                            SizedBox(width: 5),
+                            const SizedBox(width: 5),
                             TextButton(
                               onPressed: () {
                                 Navigator.push(
@@ -163,7 +174,7 @@ class LoginPage extends StatelessWidget {
                                   ),
                                 );
                               },
-                              child: Text(
+                              child: const Text(
                                 "Sign Up!",
                                 style: TextStyle(fontSize: 15),
                               ),

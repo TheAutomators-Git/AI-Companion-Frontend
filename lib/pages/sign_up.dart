@@ -29,16 +29,15 @@ class _SignUpPageState extends State<SignUpPage> {
       body: LayoutBuilder(
         builder: (context, constraints) {
           double maxWidth = 400;
-          double formWidth = constraints.maxWidth < maxWidth
-              ? constraints.maxWidth
-              : maxWidth;
+          double formWidth =
+              constraints.maxWidth < maxWidth ? constraints.maxWidth : maxWidth;
 
           return Stack(
             children: [
               // Favorite list image at top left corner
               Positioned(
-                top: -80,
-                left: -60,
+                top: -30,
+                left: 20,
                 child: Image.asset(
                   'lib/assets/favlist.png', // Ensure the image is listed in pubspec.yaml
                   width: 250,
@@ -240,7 +239,7 @@ class _SignUpPageState extends State<SignUpPage> {
 
     // Prepare the request payload
     Map<String, dynamic> requestData = {
-      'id': _emailController.text,  // Assuming email is used as ID for now
+      'id': _emailController.text, // Assuming email is used as ID for now
       'email': _emailController.text,
       'password': _passwordController.text,
       'birthday': DateFormat('yyyy-MM-dd').format(_selectedDate!),
